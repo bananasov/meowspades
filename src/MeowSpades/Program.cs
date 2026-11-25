@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Diagnostics;
+using System.Net;
 using Arch.Core;
 using Arch.System;
 using enet;
@@ -16,33 +17,34 @@ Log.Logger = log;
 
 ENetAddress.FromIpAddress(IPAddress.IPv6Any, DEFAULT_SERVER_PORT, out var address);
 
+Log.Information("Creating Enet host");
 using var host = ManagedEnetHost.Create(address, MAX_CLIENTS, 0, 0, 0, EnetHostOption.Ipv6DualMode);
 host.TrySetCompressorWithRangeCoder();
 
 Log.Information("Creating World and initializing systems");
 using var world = World.Create();
-Console.WriteLine("Hello, World!");
+var _systems = new Group<float>(
+    "Systems",
+    new IngressSystem(world, host)
+);
+_systems.Initialize();
 
+var stopwatch = Stopwatch.StartNew();
+long previousTicks = stopwatch.ElapsedTicks;
+double tickFrequency = 1.0 / Stopwatch.Frequency;
+
+Log.Information("Starting main loop");
+
+// TODO: Proper Ctrl+C handling
 while (!Console.KeyAvailable)
 {
-    if (host.Service(5, out var @event) > 0)
-    {
-        var peer = @event.Peer;
-        switch (@event.Type)
-        {
-            case EnetEventType.Connect:
-                Console.WriteLine($"[Server] connected - IncomingPeerId: {peer.IncomingPeerId}, Address: {peer.Address}");
-                break;
+    long currentTicks = stopwatch.ElapsedTicks;
+    var deltaTime = (float)((currentTicks - previousTicks) * tickFrequency);
+    previousTicks = currentTicks;
 
-            case EnetEventType.Disconnect:
-                Console.WriteLine($"[Server] disconnected - IncomingPeerId: {peer.IncomingPeerId}, Address: {peer.Address}");
-                break;
-
-            case EnetEventType.Receive:
-                break;
-        }
-
-        if (host.CheckEvents(out _) <= 0)
-            break;
-    }
+    _systems.BeforeUpdate(in deltaTime);
+    _systems.Update(in deltaTime);
+    _systems.AfterUpdate(in deltaTime);
 }
+
+_systems.Dispose();
