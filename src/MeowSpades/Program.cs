@@ -4,6 +4,7 @@ using Arch.Core;
 using Arch.System;
 using enet;
 using Enet;
+using MeowSpades.Models;
 using MeowSpades.Systems;
 using Serilog;
 
@@ -23,7 +24,8 @@ host.TrySetCompressorWithRangeCoder();
 
 Log.Information("Creating World and initializing systems");
 using var world = World.Create();
-var _systems = new Group<float>(
+var context = new ServerContext(32);
+var _systems = new Group<ServerContext>(
     "Systems",
     new IngressSystem(world, host)
 );
@@ -41,10 +43,11 @@ while (!Console.KeyAvailable)
     long currentTicks = stopwatch.ElapsedTicks;
     var deltaTime = (float)((currentTicks - previousTicks) * tickFrequency);
     previousTicks = currentTicks;
+    context.DeltaTime = deltaTime;
 
-    _systems.BeforeUpdate(in deltaTime);
-    _systems.Update(in deltaTime);
-    _systems.AfterUpdate(in deltaTime);
+    _systems.BeforeUpdate(in context);
+    _systems.Update(in context);
+    _systems.AfterUpdate(in context);
 }
 
 _systems.Dispose();
