@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net11.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Arch" Version="2.2.0" />
+    <PackageReference Include="Arch.System" Version="1.1.0" />
+    <PackageReference Include="Arch.System.SourceGenerator" Version="2.1.0" />
+    <PackageReference Include="yENet" Version="1.2.2" />
+  </ItemGroup>
+
+</Project>
