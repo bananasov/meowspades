@@ -51,6 +51,7 @@ public sealed class IngressSystem(World world, ManagedEnetHost host) : BaseSyste
         var entity = World.Create(new Player
         {
             EnetPeerId = @event.Peer.IncomingPeerId,
+            ConnectId = @event.Peer.ConnectId,
             PlayerID = (byte)id,
             State = PlayerState.StartingMap,
         });
@@ -64,7 +65,8 @@ public sealed class IngressSystem(World world, ManagedEnetHost host) : BaseSyste
     private void OnClientDisconnect(EnetEvent @event, ServerContext context)
     {
         var peer = @event.Peer;
-        context.TryRelease(peer, out var id, out var _);
+        context.TryRelease(peer, out var id, out var entity);
+        world.Destroy(entity);
 
         Log.Information("Client {address} disconnected with {id}", peer.Address, id);
     }
