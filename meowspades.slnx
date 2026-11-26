@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/src/">
+    <Project Path="src/MeowSpades.Protocol/MeowSpades.Protocol.csproj" />
     <Project Path="src/MeowSpades/MeowSpades.csproj" />
   </Folder>
 </Solution>
