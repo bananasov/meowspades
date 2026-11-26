@@ -20,6 +20,17 @@ public sealed class ServerContext
 
     public int FindNextSlot() => Array.FindIndex(_slots, s => !s.IsOccupied);
 
+    public IEnumerable<PlayerSlot> GetPlayers()
+    {
+        foreach (var slot in _slots)
+        {
+            if (slot.IsOccupied)
+            {
+                yield return slot;
+            }
+        }
+    }
+
     public bool TryAllocate(EnetPeer peer, Entity entity, byte slot)
     {
         // Manually pass in the slot so we can use the slot in other places as well
