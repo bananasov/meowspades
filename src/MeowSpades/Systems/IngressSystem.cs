@@ -36,7 +36,7 @@ public sealed class IngressSystem(World world, ManagedEnetHost host) : BaseSyste
         if (protocolVersion != ProtocolVersion.Version075)
         {
             Log.Information("Disconnected client for wrong packet version");
-            @event.Peer.DisconnectNow(3);
+            @event.Peer.DisconnectNow((uint)DisconnectReason.WrongProtocolVersion);
             return;
         }
 
