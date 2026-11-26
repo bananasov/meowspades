@@ -28,7 +28,8 @@ var context = new ServerContext(32);
 var _systems = new Group<ServerContext>(
     "Systems",
     new IngressSystem(world, host),
-    new WorldUpdateSystem(world)
+    new WorldUpdateSystem(world),
+    new EgressSystem(world, host)
 );
 _systems.Initialize();
 
