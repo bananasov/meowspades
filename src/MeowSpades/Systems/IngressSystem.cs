@@ -41,13 +41,22 @@ public sealed class IngressSystem(World world, ManagedEnetHost host) : BaseSyste
         }
 
         var id = context.FindNextSlot();
+        if (id == -1)
+        {
+            Log.Information("Server is full, kicking player");
+            @event.Peer.DisconnectNow((uint)DisconnectReason.ServerFull);
+            return;
+        }
+
         var entity = World.Create(new Player
         {
             EnetPeerId = @event.Peer.IncomingPeerId,
             PlayerID = (byte)id,
-            State = PlayerState.Disconnected,
+            State = PlayerState.StartingMap,
         });
         context.TryAllocate(@event.Peer, entity, (byte)id);
+        unsafe { @event.Peer.SetData((void*)id); }
+
 
         Log.Information("New client created with {id}", id);
     }
