@@ -4,8 +4,23 @@ namespace MeowSpades.Protocol.Server;
 /// <param name="PlayerId">The player identifier.</param>
 /// <param name="Team">The team identifier.</param>
 /// <param name="Weapon">The weapon identifier.</param>
-public readonly record struct ShortPlayerDataPacket(byte PlayerId, byte Team, byte Weapon) : IPacket
+public readonly record struct ShortPlayerDataPacket(byte PlayerId, byte Team, byte Weapon) : IPacket<ShortPlayerDataPacket>
 {
     /// <inheritdoc />
     public static byte Id => 10;
+
+    public static ShortPlayerDataPacket Deserialize(ReadOnlySpan<byte> source)
+    {
+        throw new NotImplementedException();
+    }
+
+    public int GetMaxSize()
+    {
+        throw new NotImplementedException();
+    }
+
+    public int Serialize(Span<byte> destination)
+    {
+        throw new NotImplementedException();
+    }
 }

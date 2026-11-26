@@ -12,8 +12,23 @@ public readonly record struct KillActionPacket(
     byte KillerId,
     KillType Type,
     byte RespawnTime
-) : IPacket
+) : IPacket<KillActionPacket>
 {
     /// <inheritdoc />
     public static byte Id => 16;
+
+    public static KillActionPacket Deserialize(ReadOnlySpan<byte> source)
+    {
+        throw new NotImplementedException();
+    }
+
+    public int GetMaxSize()
+    {
+        throw new NotImplementedException();
+    }
+
+    public int Serialize(Span<byte> destination)
+    {
+        throw new NotImplementedException();
+    }
 }

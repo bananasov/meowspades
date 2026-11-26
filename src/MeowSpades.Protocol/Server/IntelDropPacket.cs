@@ -5,8 +5,23 @@ namespace MeowSpades.Protocol.Server;
 /// <param name="X">The drop X coordinate.</param>
 /// <param name="Y">The drop Y coordinate.</param>
 /// <param name="Z">The drop Z coordinate.</param>
-public readonly record struct IntelDropPacket(byte PlayerId, float X, float Y, float Z) : IPacket
+public readonly record struct IntelDropPacket(byte PlayerId, float X, float Y, float Z) : IPacket<IntelDropPacket>
 {
     /// <inheritdoc />
     public static byte Id => 25;
+
+    public static IntelDropPacket Deserialize(ReadOnlySpan<byte> source)
+    {
+        throw new NotImplementedException();
+    }
+
+    public int GetMaxSize()
+    {
+        throw new NotImplementedException();
+    }
+
+    public int Serialize(Span<byte> destination)
+    {
+        throw new NotImplementedException();
+    }
 }

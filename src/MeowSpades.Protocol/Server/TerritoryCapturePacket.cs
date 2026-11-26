@@ -10,8 +10,23 @@ public readonly record struct TerritoryCapturePacket(
     byte EntityId,
     bool Winning,
     byte State
-) : IPacket
+) : IPacket<TerritoryCapturePacket>
 {
     /// <inheritdoc />
     public static byte Id => 21;
+
+    public static TerritoryCapturePacket Deserialize(ReadOnlySpan<byte> source)
+    {
+        throw new NotImplementedException();
+    }
+
+    public int GetMaxSize()
+    {
+        throw new NotImplementedException();
+    }
+
+    public int Serialize(Span<byte> destination)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -10,8 +10,23 @@ public readonly record struct ProgressBarPacket(
     byte CapturingTeamId,
     sbyte Rate,
     float Progress
-) : IPacket
+) : IPacket<ProgressBarPacket>
 {
     /// <inheritdoc />
     public static byte Id => 22;
+
+    public static ProgressBarPacket Deserialize(ReadOnlySpan<byte> source)
+    {
+        throw new NotImplementedException();
+    }
+
+    public int GetMaxSize()
+    {
+        throw new NotImplementedException();
+    }
+
+    public int Serialize(Span<byte> destination)
+    {
+        throw new NotImplementedException();
+    }
 }

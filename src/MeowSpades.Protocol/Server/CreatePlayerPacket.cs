@@ -16,8 +16,23 @@ public readonly record struct CreatePlayerPacket(
     float Y,
     float Z,
     string Name
-) : IPacket
+) : IPacket<CreatePlayerPacket>
 {
     /// <inheritdoc />
     public static byte Id => 12;
+
+    public int GetMaxSize()
+    {
+        throw new NotImplementedException();
+    }
+
+    public static CreatePlayerPacket Deserialize(ReadOnlySpan<byte> source)
+    {
+        throw new NotImplementedException();
+    }
+
+    public int Serialize(Span<byte> destination)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -12,8 +12,23 @@ public readonly record struct VersionResponsePacket(
     sbyte VersionMinor,
     sbyte VersionRevision,
     string OperatingSystem
-) : IPacket
+) : IPacket<VersionResponsePacket>
 {
     /// <inheritdoc />
     public static byte Id => 34;
+
+    public static VersionResponsePacket Deserialize(ReadOnlySpan<byte> source)
+    {
+        throw new NotImplementedException();
+    }
+
+    public int GetMaxSize()
+    {
+        throw new NotImplementedException();
+    }
+
+    public int Serialize(Span<byte> destination)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -16,8 +16,23 @@ public readonly record struct BlockLinePacket(
     int EndX,
     int EndY,
     int EndZ
-) : IPacket
+) : IPacket<BlockLinePacket>
 {
     /// <inheritdoc />
     public static byte Id => 14;
+
+    public static BlockLinePacket Deserialize(ReadOnlySpan<byte> source)
+    {
+        throw new NotImplementedException();
+    }
+
+    public int GetMaxSize()
+    {
+        throw new NotImplementedException();
+    }
+
+    public int Serialize(Span<byte> destination)
+    {
+        throw new NotImplementedException();
+    }
 }

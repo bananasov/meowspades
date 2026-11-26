@@ -20,8 +20,23 @@ public readonly record struct ExistingPlayerPacket(
     byte Green,
     byte Red,
     string Name
-) : IPacket
+) : IPacket<ExistingPlayerPacket>
 {
     /// <inheritdoc />
     public static byte Id => 9;
+
+    public static ExistingPlayerPacket Deserialize(ReadOnlySpan<byte> source)
+    {
+        throw new NotImplementedException();
+    }
+
+    public int GetMaxSize()
+    {
+        throw new NotImplementedException();
+    }
+
+    public int Serialize(Span<byte> destination)
+    {
+        throw new NotImplementedException();
+    }
 }

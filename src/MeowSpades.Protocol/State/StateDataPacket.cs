@@ -34,8 +34,23 @@ public readonly record struct StateDataPacket(
     GameMode Mode,
     CaptureTheFlagState? CaptureTheFlag,
     ReadOnlyMemory<TerritoryState> Territories
-) : IPacket
+) : IPacket<StateDataPacket>
 {
     /// <inheritdoc />
     public static byte Id => 15;
+
+    public int GetMaxSize()
+    {
+        throw new NotImplementedException();
+    }
+
+    public int Serialize(Span<byte> destination)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static StateDataPacket Deserialize(ReadOnlySpan<byte> source)
+    {
+        throw new NotImplementedException();
+    }
 }

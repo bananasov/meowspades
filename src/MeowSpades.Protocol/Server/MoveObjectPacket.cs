@@ -12,8 +12,23 @@ public readonly record struct MoveObjectPacket(
     float X,
     float Y,
     float Z
-) : IPacket
+) : IPacket<MoveObjectPacket>
 {
     /// <inheritdoc />
     public static byte Id => 11;
+
+    public static MoveObjectPacket Deserialize(ReadOnlySpan<byte> source)
+    {
+        throw new NotImplementedException();
+    }
+
+    public int GetMaxSize()
+    {
+        throw new NotImplementedException();
+    }
+
+    public int Serialize(Span<byte> destination)
+    {
+        throw new NotImplementedException();
+    }
 }

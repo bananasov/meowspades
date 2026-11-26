@@ -6,8 +6,27 @@ namespace MeowSpades.Protocol.Client;
 /// <param name="PlayerId">The sending player identifier.</param>
 /// <param name="Type">The chat destination.</param>
 /// <param name="Message">The CP437-encoded message as a .NET string.</param>
-public readonly record struct ChatMessagePacket(byte PlayerId, ChatType Type, string Message) : IPacket
+public readonly record struct ChatMessagePacket(
+    byte PlayerId,
+    ChatType Type,
+    string Message
+) : IPacket<ChatMessagePacket>
 {
     /// <inheritdoc />
     public static byte Id => 17;
+
+    public static ChatMessagePacket Deserialize(ReadOnlySpan<byte> source)
+    {
+        throw new NotImplementedException();
+    }
+
+    public int GetMaxSize()
+    {
+        throw new NotImplementedException();
+    }
+
+    public int Serialize(Span<byte> destination)
+    {
+        throw new NotImplementedException();
+    }
 }
