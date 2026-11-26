@@ -7,6 +7,9 @@ public record struct Player
 {
     public uint EnetPeerId { get; set; }
 
+    /// <summary>The unique identifier of the player's current ENet connection.</summary>
+    public uint ConnectId { get; set; }
+
     /// <summary>The player's identifier.</summary>
     public byte PlayerID { get; set; }
 
