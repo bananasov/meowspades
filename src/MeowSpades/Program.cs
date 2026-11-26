@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Net;
+using System.Text;
 using Arch.Core;
 using Arch.System;
 using enet;
@@ -10,6 +11,8 @@ using Serilog;
 
 const ushort DEFAULT_SERVER_PORT = 32887;
 const nuint MAX_CLIENTS = 16;
+
+Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
 using var log = new LoggerConfiguration()
     .WriteTo.Console()
