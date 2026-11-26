@@ -1,3 +1,5 @@
+using MeowSpades.Protocol.IO;
+
 namespace MeowSpades.Protocol.Server;
 
 /// <summary>Moves a game object such as a tent, intel, or grenade.</summary>
@@ -17,18 +19,38 @@ public readonly record struct MoveObjectPacket(
     /// <inheritdoc />
     public static byte Id => 11;
 
+    /// <inheritdoc />
     public static MoveObjectPacket Deserialize(ReadOnlySpan<byte> source)
     {
-        throw new NotImplementedException();
+        const int SerializedSize = 15;
+        PacketValidation.ThrowIfInvalidLength(source, SerializedSize);
+
+        var reader = new SpanReader(source);
+        PacketValidation.ThrowIfInvalidPacketId(reader.ReadByte(), Id);
+
+        var objectId = reader.ReadByte();
+        var team = reader.ReadByte();
+        var x = reader.ReadFloat();
+        var y = reader.ReadFloat();
+        var z = reader.ReadFloat();
+
+        return new MoveObjectPacket(objectId, team, x, y, z);
     }
 
-    public int GetMaxSize()
-    {
-        throw new NotImplementedException();
-    }
+    /// <inheritdoc />
+    public int GetMaxSize() => 15;
 
+    /// <inheritdoc />
     public int Serialize(Span<byte> destination)
     {
-        throw new NotImplementedException();
+        var writer = new SpanWriter(destination);
+        writer.WriteByte(Id);
+        writer.WriteByte(ObjectId);
+        writer.WriteByte(Team);
+        writer.WriteFloat(X);
+        writer.WriteFloat(Y);
+        writer.WriteFloat(Z);
+
+        return writer.WrittenCount;
     }
 }

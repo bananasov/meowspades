@@ -1,3 +1,5 @@
+using MeowSpades.Protocol.IO;
+
 namespace MeowSpades.Protocol.Server;
 
 /// <summary>Reports a Territory Control capture event.</summary>
@@ -15,18 +17,36 @@ public readonly record struct TerritoryCapturePacket(
     /// <inheritdoc />
     public static byte Id => 21;
 
+    /// <inheritdoc />
     public static TerritoryCapturePacket Deserialize(ReadOnlySpan<byte> source)
     {
-        throw new NotImplementedException();
+        const int SerializedSize = 5;
+        PacketValidation.ThrowIfInvalidLength(source, SerializedSize);
+
+        var reader = new SpanReader(source);
+        PacketValidation.ThrowIfInvalidPacketId(reader.ReadByte(), Id);
+
+        var playerId = reader.ReadByte();
+        var entityId = reader.ReadByte();
+        var winning = reader.ReadBoolean();
+        var state = reader.ReadByte();
+
+        return new TerritoryCapturePacket(playerId, entityId, winning, state);
     }
 
-    public int GetMaxSize()
-    {
-        throw new NotImplementedException();
-    }
+    /// <inheritdoc />
+    public int GetMaxSize() => 5;
 
+    /// <inheritdoc />
     public int Serialize(Span<byte> destination)
     {
-        throw new NotImplementedException();
+        var writer = new SpanWriter(destination);
+        writer.WriteByte(Id);
+        writer.WriteByte(PlayerId);
+        writer.WriteByte(EntityId);
+        writer.WriteBoolean(Winning);
+        writer.WriteByte(State);
+
+        return writer.WrittenCount;
     }
 }

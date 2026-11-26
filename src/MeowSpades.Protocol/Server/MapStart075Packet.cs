@@ -1,3 +1,5 @@
+using MeowSpades.Protocol.IO;
+
 namespace MeowSpades.Protocol.Server;
 
 /// <summary>Begins a protocol 0.75 map transfer.</summary>
@@ -7,18 +9,30 @@ public readonly record struct MapStart075Packet(uint MapSize) : IPacket<MapStart
     /// <inheritdoc />
     public static byte Id => 18;
 
+    /// <inheritdoc />
     public static MapStart075Packet Deserialize(ReadOnlySpan<byte> source)
     {
-        throw new NotImplementedException();
+        const int SerializedSize = 5;
+        PacketValidation.ThrowIfInvalidLength(source, SerializedSize);
+
+        var reader = new SpanReader(source);
+        PacketValidation.ThrowIfInvalidPacketId(reader.ReadByte(), Id);
+
+        var mapSize = reader.ReadUInt32();
+
+        return new MapStart075Packet(mapSize);
     }
 
-    public int GetMaxSize()
-    {
-        throw new NotImplementedException();
-    }
+    /// <inheritdoc />
+    public int GetMaxSize() => 5;
 
+    /// <inheritdoc />
     public int Serialize(Span<byte> destination)
     {
-        throw new NotImplementedException();
+        var writer = new SpanWriter(destination);
+        writer.WriteByte(Id);
+        writer.WriteUInt32(MapSize);
+
+        return writer.WrittenCount;
     }
 }

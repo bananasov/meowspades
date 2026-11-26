@@ -1,3 +1,5 @@
+using MeowSpades.Protocol.IO;
+
 namespace MeowSpades.Protocol.Server;
 
 /// <summary>Requests version information and optionally selects extended properties.</summary>
@@ -7,18 +9,28 @@ public readonly record struct VersionGetPacket(ReadOnlyMemory<byte> PropertyIds)
     /// <inheritdoc />
     public static byte Id => 33;
 
+    /// <inheritdoc />
     public static VersionGetPacket Deserialize(ReadOnlySpan<byte> source)
     {
-        throw new NotImplementedException();
+        PacketValidation.ThrowIfTooShort(source, sizeof(byte));
+
+        var reader = new SpanReader(source);
+        PacketValidation.ThrowIfInvalidPacketId(reader.ReadByte(), Id);
+
+        var propertyIds = reader.ReadBytes(reader.Remaining);
+        return new VersionGetPacket(propertyIds.ToArray());
     }
 
-    public int GetMaxSize()
-    {
-        throw new NotImplementedException();
-    }
+    /// <inheritdoc />
+    public int GetMaxSize() => 1 + PropertyIds.Length;
 
+    /// <inheritdoc />
     public int Serialize(Span<byte> destination)
     {
-        throw new NotImplementedException();
+        var writer = new SpanWriter(destination);
+        writer.WriteByte(Id);
+        writer.WriteBytes(PropertyIds.Span);
+
+        return writer.WrittenCount;
     }
 }

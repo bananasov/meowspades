@@ -1,3 +1,5 @@
+using MeowSpades.Protocol.IO;
+
 namespace MeowSpades.Protocol.Server;
 
 /// <summary>Sets the client's fog color.</summary>
@@ -10,18 +12,36 @@ public readonly record struct FogColorPacket(byte Alpha, byte Blue, byte Green, 
     /// <inheritdoc />
     public static byte Id => 27;
 
-    public int GetMaxSize()
-    {
-        throw new NotImplementedException();
-    }
+    /// <inheritdoc />
+    public int GetMaxSize() => 5;
 
+    /// <inheritdoc />
     public static FogColorPacket Deserialize(ReadOnlySpan<byte> source)
     {
-        throw new NotImplementedException();
+        const int SerializedSize = 5;
+        PacketValidation.ThrowIfInvalidLength(source, SerializedSize);
+
+        var reader = new SpanReader(source);
+        PacketValidation.ThrowIfInvalidPacketId(reader.ReadByte(), Id);
+
+        var alpha = reader.ReadByte();
+        var blue = reader.ReadByte();
+        var green = reader.ReadByte();
+        var red = reader.ReadByte();
+
+        return new FogColorPacket(alpha, blue, green, red);
     }
 
+    /// <inheritdoc />
     public int Serialize(Span<byte> destination)
     {
-        throw new NotImplementedException();
+        var writer = new SpanWriter(destination);
+        writer.WriteByte(Id);
+        writer.WriteByte(Alpha);
+        writer.WriteByte(Blue);
+        writer.WriteByte(Green);
+        writer.WriteByte(Red);
+
+        return writer.WrittenCount;
     }
 }

@@ -1,3 +1,5 @@
+using MeowSpades.Protocol.IO;
+
 namespace MeowSpades.Protocol.Server;
 
 /// <summary>Contains a chunk of compressed map data.</summary>
@@ -7,18 +9,29 @@ public readonly record struct MapChunkPacket(ReadOnlyMemory<byte> Data) : IPacke
     /// <inheritdoc />
     public static byte Id => 19;
 
+    /// <inheritdoc />
     public static MapChunkPacket Deserialize(ReadOnlySpan<byte> source)
     {
-        throw new NotImplementedException();
+        PacketValidation.ThrowIfTooShort(source, sizeof(byte));
+
+        var reader = new SpanReader(source);
+        PacketValidation.ThrowIfInvalidPacketId(reader.ReadByte(), Id);
+
+        var data = reader.ReadBytes(reader.Remaining);
+
+        return new MapChunkPacket(data.ToArray());
     }
 
-    public int GetMaxSize()
-    {
-        throw new NotImplementedException();
-    }
+    /// <inheritdoc />
+    public int GetMaxSize() => 1 + Data.Length;
 
+    /// <inheritdoc />
     public int Serialize(Span<byte> destination)
     {
-        throw new NotImplementedException();
+        var writer = new SpanWriter(destination);
+        writer.WriteByte(Id);
+        writer.WriteBytes(Data.Span);
+
+        return writer.WrittenCount;
     }
 }

@@ -1,4 +1,5 @@
 using MeowSpades.Protocol.Enums;
+using MeowSpades.Protocol.IO;
 
 namespace MeowSpades.Protocol.Server;
 
@@ -17,18 +18,36 @@ public readonly record struct KillActionPacket(
     /// <inheritdoc />
     public static byte Id => 16;
 
+    /// <inheritdoc />
     public static KillActionPacket Deserialize(ReadOnlySpan<byte> source)
     {
-        throw new NotImplementedException();
+        const int SerializedSize = 5;
+        PacketValidation.ThrowIfInvalidLength(source, SerializedSize);
+
+        var reader = new SpanReader(source);
+        PacketValidation.ThrowIfInvalidPacketId(reader.ReadByte(), Id);
+
+        var playerId = reader.ReadByte();
+        var killerId = reader.ReadByte();
+        var killType = (KillType)reader.ReadByte();
+        var respawnTime = reader.ReadByte();
+
+        return new KillActionPacket(playerId, killerId, killType, respawnTime);
     }
 
-    public int GetMaxSize()
-    {
-        throw new NotImplementedException();
-    }
+    /// <inheritdoc />
+    public int GetMaxSize() => 5;
 
+    /// <inheritdoc />
     public int Serialize(Span<byte> destination)
     {
-        throw new NotImplementedException();
+        var writer = new SpanWriter(destination);
+        writer.WriteByte(Id);
+        writer.WriteByte(PlayerId);
+        writer.WriteByte(KillerId);
+        writer.WriteByte((byte)Type);
+        writer.WriteByte(RespawnTime);
+
+        return writer.WrittenCount;
     }
 }

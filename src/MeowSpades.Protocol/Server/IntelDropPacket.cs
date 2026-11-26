@@ -1,3 +1,5 @@
+using MeowSpades.Protocol.IO;
+
 namespace MeowSpades.Protocol.Server;
 
 /// <summary>Reports that a player dropped intel.</summary>
@@ -10,18 +12,36 @@ public readonly record struct IntelDropPacket(byte PlayerId, float X, float Y, f
     /// <inheritdoc />
     public static byte Id => 25;
 
+    /// <inheritdoc />
     public static IntelDropPacket Deserialize(ReadOnlySpan<byte> source)
     {
-        throw new NotImplementedException();
+        const int SerializedSize = 14;
+        PacketValidation.ThrowIfInvalidLength(source, SerializedSize);
+
+        var reader = new SpanReader(source);
+        PacketValidation.ThrowIfInvalidPacketId(reader.ReadByte(), Id);
+
+        var playerId = reader.ReadByte();
+        var x = reader.ReadFloat();
+        var y = reader.ReadFloat();
+        var z = reader.ReadFloat();
+
+        return new IntelDropPacket(playerId, x, y, z);
     }
 
-    public int GetMaxSize()
-    {
-        throw new NotImplementedException();
-    }
+    /// <inheritdoc />
+    public int GetMaxSize() => 14;
 
+    /// <inheritdoc />
     public int Serialize(Span<byte> destination)
     {
-        throw new NotImplementedException();
+        var writer = new SpanWriter(destination);
+        writer.WriteByte(Id);
+        writer.WriteByte(PlayerId);
+        writer.WriteFloat(X);
+        writer.WriteFloat(Y);
+        writer.WriteFloat(Z);
+
+        return writer.WrittenCount;
     }
 }

@@ -1,3 +1,5 @@
+using MeowSpades.Protocol.IO;
+
 namespace MeowSpades.Protocol.Server;
 
 /// <summary>Updates a Territory Control progress bar.</summary>
@@ -15,18 +17,36 @@ public readonly record struct ProgressBarPacket(
     /// <inheritdoc />
     public static byte Id => 22;
 
+    /// <inheritdoc />
     public static ProgressBarPacket Deserialize(ReadOnlySpan<byte> source)
     {
-        throw new NotImplementedException();
+        const int SerializedSize = 8;
+        PacketValidation.ThrowIfInvalidLength(source, SerializedSize);
+
+        var reader = new SpanReader(source);
+        PacketValidation.ThrowIfInvalidPacketId(reader.ReadByte(), Id);
+
+        var entityId = reader.ReadByte();
+        var capturingTeamId = reader.ReadByte();
+        var rate = reader.ReadSByte();
+        var progress = reader.ReadFloat();
+
+        return new ProgressBarPacket(entityId, capturingTeamId, rate, progress);
     }
 
-    public int GetMaxSize()
-    {
-        throw new NotImplementedException();
-    }
+    /// <inheritdoc />
+    public int GetMaxSize() => 8;
 
+    /// <inheritdoc />
     public int Serialize(Span<byte> destination)
     {
-        throw new NotImplementedException();
+        var writer = new SpanWriter(destination);
+        writer.WriteByte(Id);
+        writer.WriteByte(EntityId);
+        writer.WriteByte(CapturingTeamId);
+        writer.WriteSByte(Rate);
+        writer.WriteFloat(Progress);
+
+        return writer.WrittenCount;
     }
 }

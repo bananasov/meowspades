@@ -1,3 +1,5 @@
+using MeowSpades.Protocol.IO;
+
 namespace MeowSpades.Protocol.Server;
 
 /// <summary>Reports an intel capture event.</summary>
@@ -8,18 +10,32 @@ public readonly record struct IntelCapturePacket(byte PlayerId, bool Winning) : 
     /// <inheritdoc />
     public static byte Id => 23;
 
-    public int GetMaxSize()
-    {
-        throw new NotImplementedException();
-    }
+    /// <inheritdoc />
+    public int GetMaxSize() => 3;
 
+    /// <inheritdoc />
     public static IntelCapturePacket Deserialize(ReadOnlySpan<byte> source)
     {
-        throw new NotImplementedException();
+        const int SerializedSize = 3;
+        PacketValidation.ThrowIfInvalidLength(source, SerializedSize);
+
+        var reader = new SpanReader(source);
+        PacketValidation.ThrowIfInvalidPacketId(reader.ReadByte(), Id);
+
+        var playerId = reader.ReadByte();
+        var winning = reader.ReadBoolean();
+
+        return new IntelCapturePacket(playerId, winning);
     }
 
+    /// <inheritdoc />
     public int Serialize(Span<byte> destination)
     {
-        throw new NotImplementedException();
+        var writer = new SpanWriter(destination);
+        writer.WriteByte(Id);
+        writer.WriteByte(PlayerId);
+        writer.WriteBoolean(Winning);
+
+        return writer.WrittenCount;
     }
 }
