@@ -12,7 +12,8 @@ public sealed class WorldUpdateSystem(World world) : BaseSystem<World, ServerCon
 
     public override void Update(in ServerContext context)
     {
-        world.Query(in playerQuery, (Entity entity, ref Player player) => {
+        world.Query(in playerQuery, (Entity entity, ref Player player) =>
+        {
             switch (player.State)
             {
                 case PlayerState.Disconnected:
