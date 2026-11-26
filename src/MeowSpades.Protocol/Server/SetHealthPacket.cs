@@ -30,11 +30,14 @@ public readonly record struct SetHealthPacket(
 
         var health = reader.ReadByte();
         var damageType = reader.ReadByte();
-        var sourceX = reader.ReadFloat();
-        var sourceY = reader.ReadFloat();
-        var sourceZ = reader.ReadFloat();
-
-        return new SetHealthPacket(health, damageType, sourceX, sourceY, sourceZ);
+        var sourcePosition = reader.ReadVector3();
+    
+        return new SetHealthPacket(
+            health,
+            damageType,
+            sourcePosition.X,
+            sourcePosition.Y,
+            sourcePosition.Z);
     }
 
     /// <inheritdoc />
@@ -47,9 +50,7 @@ public readonly record struct SetHealthPacket(
         writer.WriteByte(Id);
         writer.WriteByte(Health);
         writer.WriteByte(DamageType);
-        writer.WriteFloat(SourceX);
-        writer.WriteFloat(SourceY);
-        writer.WriteFloat(SourceZ);
+        writer.WriteVector3(SourceX, SourceY, SourceZ);
 
         return writer.WrittenCount;
     }

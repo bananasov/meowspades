@@ -41,14 +41,19 @@ public readonly record struct CreatePlayerPacket(
         var playerId = reader.ReadByte();
         var weapon = reader.ReadByte();
         var team = reader.ReadByte();
-        var x = reader.ReadFloat();
-        var y = reader.ReadFloat();
-        var z = reader.ReadFloat();
+        var position = reader.ReadVector3();
 
         var nameBytes = reader.ReadBytes(reader.Remaining);
         var name = Cp437.GetString(nameBytes);
 
-        return new CreatePlayerPacket(playerId, weapon, team, x, y, z, name);
+        return new CreatePlayerPacket(
+                    playerId,
+                    weapon,
+                    team,
+                    position.X,
+                    position.Y,
+                    position.Z,
+                    name);
     }
 
     /// <inheritdoc />
@@ -59,9 +64,7 @@ public readonly record struct CreatePlayerPacket(
         writer.WriteByte(PlayerId);
         writer.WriteByte(Weapon);
         writer.WriteByte(Team);
-        writer.WriteFloat(X);
-        writer.WriteFloat(Y);
-        writer.WriteFloat(Z);
+        writer.WriteVector3(X, Y, Z);
         writer.WriteBytes(Cp437.GetBytes(Name));
 
         return writer.WrittenCount;

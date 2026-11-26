@@ -30,11 +30,8 @@ public readonly record struct MoveObjectPacket(
 
         var objectId = reader.ReadByte();
         var team = reader.ReadByte();
-        var x = reader.ReadFloat();
-        var y = reader.ReadFloat();
-        var z = reader.ReadFloat();
-
-        return new MoveObjectPacket(objectId, team, x, y, z);
+        var position = reader.ReadVector3();
+        return new MoveObjectPacket(objectId, team, position.X, position.Y, position.Z);
     }
 
     /// <inheritdoc />
@@ -47,9 +44,7 @@ public readonly record struct MoveObjectPacket(
         writer.WriteByte(Id);
         writer.WriteByte(ObjectId);
         writer.WriteByte(Team);
-        writer.WriteFloat(X);
-        writer.WriteFloat(Y);
-        writer.WriteFloat(Z);
+        writer.WriteVector3(X, Y, Z);
 
         return writer.WrittenCount;
     }

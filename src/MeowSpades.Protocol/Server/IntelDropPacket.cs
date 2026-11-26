@@ -22,11 +22,9 @@ public readonly record struct IntelDropPacket(byte PlayerId, float X, float Y, f
         PacketValidation.ThrowIfInvalidPacketId(reader.ReadByte(), Id);
 
         var playerId = reader.ReadByte();
-        var x = reader.ReadFloat();
-        var y = reader.ReadFloat();
-        var z = reader.ReadFloat();
+        var position = reader.ReadVector3();
 
-        return new IntelDropPacket(playerId, x, y, z);
+        return new IntelDropPacket(playerId, position.X, position.Y, position.Z);
     }
 
     /// <inheritdoc />
@@ -38,9 +36,7 @@ public readonly record struct IntelDropPacket(byte PlayerId, float X, float Y, f
         var writer = new SpanWriter(destination);
         writer.WriteByte(Id);
         writer.WriteByte(PlayerId);
-        writer.WriteFloat(X);
-        writer.WriteFloat(Y);
-        writer.WriteFloat(Z);
+        writer.WriteVector3(X, Y, Z);
 
         return writer.WrittenCount;
     }

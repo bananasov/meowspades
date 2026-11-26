@@ -36,22 +36,18 @@ public readonly record struct GrenadePacket(
 
         byte playerId = reader.ReadByte();
         float fuseLength = reader.ReadFloat();
-        float x = reader.ReadFloat();
-        float y = reader.ReadFloat();
-        float z = reader.ReadFloat();
-        float velocityX = reader.ReadFloat();
-        float velocityY = reader.ReadFloat();
-        float velocityZ = reader.ReadFloat();
+        var position = reader.ReadVector3();
+        var velocity = reader.ReadVector3();
 
         return new GrenadePacket(
             playerId,
             fuseLength,
-            x,
-            y,
-            z,
-            velocityX,
-            velocityY,
-            velocityZ);
+            position.X,
+            position.Y,
+            position.Z,
+            velocity.X,
+            velocity.Y,
+            velocity.Z);
     }
 
     /// <inheritdoc />
@@ -64,12 +60,8 @@ public readonly record struct GrenadePacket(
         writer.WriteByte(Id);
         writer.WriteByte(PlayerId);
         writer.WriteFloat(FuseLength);
-        writer.WriteFloat(X);
-        writer.WriteFloat(Y);
-        writer.WriteFloat(Z);
-        writer.WriteFloat(VelocityX);
-        writer.WriteFloat(VelocityY);
-        writer.WriteFloat(VelocityZ);
+        writer.WriteVector3(X, Y, Z);
+        writer.WriteVector3(VelocityX, VelocityY, VelocityZ);
 
         return writer.WrittenCount;
     }

@@ -1,4 +1,4 @@
-using System.Numerics;
+
 using MeowSpades.Protocol.IO;
 using MeowSpades.Protocol.State;
 
@@ -33,15 +33,8 @@ public readonly record struct WorldUpdate076Packet(
         for (int i = 0; i < players.Length; i++)
         {
             byte playerId = reader.ReadByte();
-            float positionX = reader.ReadFloat();
-            float positionY = reader.ReadFloat();
-            float positionZ = reader.ReadFloat();
-            float orientationX = reader.ReadFloat();
-            float orientationY = reader.ReadFloat();
-            float orientationZ = reader.ReadFloat();
-
-            var position = new Vector3(positionX, positionY, positionZ);
-            var orientation = new Vector3(orientationX, orientationY, orientationZ);
+            var position = reader.ReadVector3();
+            var orientation = reader.ReadVector3();
 
             players[i] = new PlayerTransform076(playerId, position, orientation);
         }
@@ -61,12 +54,8 @@ public readonly record struct WorldUpdate076Packet(
         foreach (PlayerTransform076 player in Players.Span)
         {
             writer.WriteByte(player.PlayerId);
-            writer.WriteFloat(player.Position.X);
-            writer.WriteFloat(player.Position.Y);
-            writer.WriteFloat(player.Position.Z);
-            writer.WriteFloat(player.Orientation.X);
-            writer.WriteFloat(player.Orientation.Y);
-            writer.WriteFloat(player.Orientation.Z);
+            writer.WriteVector3(player.Position);
+            writer.WriteVector3(player.Orientation);
         }
 
         return writer.WrittenCount;

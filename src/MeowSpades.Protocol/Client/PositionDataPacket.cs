@@ -25,11 +25,8 @@ public readonly record struct PositionDataPacket(
         var reader = new SpanReader(source);
         PacketValidation.ThrowIfInvalidPacketId(reader.ReadByte(), Id);
 
-        var x = reader.ReadFloat();
-        var y = reader.ReadFloat();
-        var z = reader.ReadFloat();
-
-        return new PositionDataPacket(x, y, z);
+        var position = reader.ReadVector3();
+        return new PositionDataPacket(position.X, position.Y, position.Z);
     }
 
     /// <inheritdoc />
@@ -40,9 +37,7 @@ public readonly record struct PositionDataPacket(
     {
         var writer = new SpanWriter(destination);
         writer.WriteByte(Id);
-        writer.WriteFloat(X);
-        writer.WriteFloat(Y);
-        writer.WriteFloat(Z);
+        writer.WriteVector3(X, Y, Z);
 
         return writer.WrittenCount;
     }

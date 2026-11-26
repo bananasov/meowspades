@@ -24,11 +24,8 @@ public readonly record struct OrientationDataPacket(
         var reader = new SpanReader(source);
         PacketValidation.ThrowIfInvalidPacketId(reader.ReadByte(), Id);
 
-        float x = reader.ReadFloat();
-        float y = reader.ReadFloat();
-        float z = reader.ReadFloat();
-
-        return new OrientationDataPacket(x, y, z);
+        var orientation = reader.ReadVector3();
+        return new OrientationDataPacket(orientation.X, orientation.Y, orientation.Z);
     }
 
     /// <inheritdoc />
@@ -39,9 +36,7 @@ public readonly record struct OrientationDataPacket(
     {
         var writer = new SpanWriter(destination);
         writer.WriteByte(Id);
-        writer.WriteFloat(X);
-        writer.WriteFloat(Y);
-        writer.WriteFloat(Z);
+        writer.WriteVector3(X, Y, Z);
 
         return writer.WrittenCount;
     }
