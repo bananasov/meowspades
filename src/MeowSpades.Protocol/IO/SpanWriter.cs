@@ -1,4 +1,5 @@
 using System.Buffers.Binary;
+using System.Numerics;
 
 namespace MeowSpades.Protocol.IO;
 
@@ -103,9 +104,24 @@ internal ref struct SpanWriter
     /// <param name="value">The value to write.</param>
     internal void WriteDouble(double value) => WriteInt64(BitConverter.DoubleToInt64Bits(value));
 
+    /// <summary>Writes the X, Y, and Z components of a vector in order.</summary>
+    /// <param name="value">The vector to write.</param>
+    internal void WriteVector3(Vector3 value) => WriteVector3(value.X, value.Y, value.Z);
+
+    /// <summary>Writes X, Y, and Z components as little-endian single-precision values.</summary>
+    /// <param name="x">The X component.</param>
+    /// <param name="y">The Y component.</param>
+    /// <param name="z">The Z component.</param>
+    internal void WriteVector3(float x, float y, float z)
+    {
+        WriteFloat(x);
+        WriteFloat(y);
+        WriteFloat(z);
+    }
+
     /// <summary>Copies bytes into the destination.</summary>
     /// <param name="value">The bytes to write.</param>
-    internal void WriteBytes(ReadOnlySpan<byte> value)
+    internal void WriteBytes(scoped ReadOnlySpan<byte> value)
     {
         EnsureCapacity(value.Length);
         value.CopyTo(_destination[_position..]);

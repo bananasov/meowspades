@@ -1,4 +1,5 @@
 using System.Buffers.Binary;
+using System.Numerics;
 
 namespace MeowSpades.Protocol.IO;
 
@@ -108,6 +109,16 @@ internal ref struct SpanReader
     /// <summary>Reads a double-precision floating-point value in little-endian format.</summary>
     /// <returns>The value read.</returns>
     internal double ReadDouble() => BitConverter.Int64BitsToDouble(ReadInt64());
+
+    /// <summary>Reads X, Y, and Z components as little-endian single-precision values.</summary>
+    /// <returns>The vector read.</returns>
+    internal Vector3 ReadVector3()
+    {
+        float x = ReadFloat();
+        float y = ReadFloat();
+        float z = ReadFloat();
+        return new Vector3(x, y, z);
+    }
 
     /// <summary>Reads a specified number of bytes from the source.</summary>
     /// <param name="count">The number of bytes to read.</param>
