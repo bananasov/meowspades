@@ -42,8 +42,6 @@ public sealed class WorldUpdateSystem(World world) : BaseSystem<World, ServerCon
                     // TODO: Handle ready players.
                     break;
             }
-
-            Console.WriteLine($"Moved: {entity}");
         });
     }
 }
