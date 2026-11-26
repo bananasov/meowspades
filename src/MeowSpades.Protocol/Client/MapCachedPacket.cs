@@ -1,3 +1,5 @@
+using MeowSpades.Protocol.IO;
+
 namespace MeowSpades.Protocol.Client;
 
 /// <summary>Reports whether the map is cached by the client.</summary>
@@ -9,16 +11,26 @@ public readonly record struct MapCachedPacket(bool Cached) : IPacket<MapCachedPa
 
     public static MapCachedPacket Deserialize(ReadOnlySpan<byte> source)
     {
-        throw new NotImplementedException();
+        const int SerializedSize = 2;
+        PacketValidation.ThrowIfInvalidLength(source, SerializedSize);
+
+        var reader = new SpanReader(source);
+        PacketValidation.ThrowIfInvalidPacketId(reader.ReadByte(), Id);
+
+        var cached = reader.ReadBoolean();
+        return new MapCachedPacket(cached);
     }
 
-    public int GetMaxSize()
-    {
-        throw new NotImplementedException();
-    }
+    /// <inheritdoc />
+    public int GetMaxSize() => 2;
 
+    /// <inheritdoc />
     public int Serialize(Span<byte> destination)
     {
-        throw new NotImplementedException();
+        var writer = new SpanWriter(destination);
+        writer.WriteByte(Id);
+        writer.WriteBoolean(Cached);
+
+        return writer.WrittenCount;
     }
 }

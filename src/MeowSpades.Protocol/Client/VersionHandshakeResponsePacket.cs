@@ -1,3 +1,5 @@
+using MeowSpades.Protocol.IO;
+
 namespace MeowSpades.Protocol.Client;
 
 /// <summary>Returns the challenge from a version-handshake initialization.</summary>
@@ -9,18 +11,30 @@ public readonly record struct VersionHandshakeResponsePacket(
     /// <inheritdoc />
     public static byte Id => 32;
 
+    /// <inheritdoc />
     public static VersionHandshakeResponsePacket Deserialize(ReadOnlySpan<byte> source)
     {
-        throw new NotImplementedException();
+        const int SerializedSize = 5;
+        PacketValidation.ThrowIfInvalidLength(source, SerializedSize);
+
+        var reader = new SpanReader(source);
+        PacketValidation.ThrowIfInvalidPacketId(reader.ReadByte(), Id);
+
+        var challenge = reader.ReadInt32();
+
+        return new VersionHandshakeResponsePacket(challenge);
     }
 
-    public int GetMaxSize()
-    {
-        throw new NotImplementedException();
-    }
+    /// <inheritdoc />
+    public int GetMaxSize() => 5;
 
+    /// <inheritdoc />
     public int Serialize(Span<byte> destination)
     {
-        throw new NotImplementedException();
+        var writer = new SpanWriter(destination);
+        writer.WriteByte(Id);
+        writer.WriteInt32(Challenge);
+
+        return writer.WrittenCount;
     }
 }

@@ -1,4 +1,5 @@
 using MeowSpades.Protocol.Enums;
+using MeowSpades.Protocol.IO;
 
 namespace MeowSpades.Protocol.Client;
 
@@ -19,18 +20,38 @@ public readonly record struct BlockActionPacket(
     /// <inheritdoc />
     public static byte Id => 13;
 
+    /// <inheritdoc />
+    public int GetMaxSize() => 15;
+
+    /// <inheritdoc />
     public static BlockActionPacket Deserialize(ReadOnlySpan<byte> source)
     {
-        throw new NotImplementedException();
+        const int SerializedSize = 15;
+        PacketValidation.ThrowIfInvalidLength(source, SerializedSize);
+
+        var reader = new SpanReader(source);
+        PacketValidation.ThrowIfInvalidPacketId(reader.ReadByte(), Id);
+
+        var playerId = reader.ReadByte();
+        var actionType = (BlockActionType)reader.ReadByte();
+        var x = reader.ReadInt32();
+        var y = reader.ReadInt32();
+        var z = reader.ReadInt32();
+
+        return new BlockActionPacket(playerId, actionType, x, y, z);
     }
 
-    public int GetMaxSize()
-    {
-        throw new NotImplementedException();
-    }
-
+    /// <inheritdoc />
     public int Serialize(Span<byte> destination)
     {
-        throw new NotImplementedException();
+        var writer = new SpanWriter(destination);
+        writer.WriteByte(Id);
+        writer.WriteByte(PlayerId);
+        writer.WriteByte((byte)Action);
+        writer.WriteInt32(X);
+        writer.WriteInt32(Y);
+        writer.WriteInt32(Z);
+
+        return writer.WrittenCount;
     }
 }

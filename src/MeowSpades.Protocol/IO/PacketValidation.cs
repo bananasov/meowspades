@@ -17,6 +17,20 @@ internal static class PacketValidation
         }
     }
 
+    /// <summary>Throws when the serialized packet is shorter than the required minimum size.</summary>
+    /// <param name="source">The serialized packet data.</param>
+    /// <param name="minimumSize">The minimum packet size in bytes.</param>
+    /// <exception cref="ArgumentException">The source is shorter than <paramref name="minimumSize"/>.</exception>
+    internal static void ThrowIfTooShort(ReadOnlySpan<byte> source, int minimumSize)
+    {
+        if (source.Length < minimumSize)
+        {
+            throw new ArgumentException(
+                $"Serialized packet data must be at least {minimumSize} bytes.",
+                nameof(source));
+        }
+    }
+
     /// <summary>Throws when the packet identifier does not match the expected identifier.</summary>
     /// <param name="actualId">The identifier read from the packet.</param>
     /// <param name="expectedId">The expected identifier.</param>

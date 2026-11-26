@@ -1,3 +1,5 @@
+using MeowSpades.Protocol.IO;
+
 namespace MeowSpades.Protocol.Client;
 
 /// <summary>Requests a weapon change.</summary>
@@ -11,18 +13,30 @@ public readonly record struct ChangeWeaponPacket(
     /// <inheritdoc />
     public static byte Id => 30;
 
+    /// <inheritdoc />
+    public int GetMaxSize() => 3;
+
     public static ChangeWeaponPacket Deserialize(ReadOnlySpan<byte> source)
     {
-        throw new NotImplementedException();
-    }
+        const int SerializedSize = 3;
+        PacketValidation.ThrowIfInvalidLength(source, SerializedSize);
 
-    public int GetMaxSize()
-    {
-        throw new NotImplementedException();
+        var reader = new SpanReader(source);
+        PacketValidation.ThrowIfInvalidPacketId(reader.ReadByte(), Id);
+
+        var playerId = reader.ReadByte();
+        var weaponId = reader.ReadByte();
+
+        return new ChangeWeaponPacket(playerId, weaponId);
     }
 
     public int Serialize(Span<byte> destination)
     {
-        throw new NotImplementedException();
+        var writer = new SpanWriter(destination);
+        writer.WriteByte(Id);
+        writer.WriteByte(PlayerId);
+        writer.WriteByte(WeaponId);
+
+        return writer.WrittenCount;
     }
 }

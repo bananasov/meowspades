@@ -1,3 +1,5 @@
+using MeowSpades.Protocol.IO;
+
 namespace MeowSpades.Protocol.Client;
 
 // TODO: Consider using Vector3 here, its the same anyways.
@@ -16,16 +18,31 @@ public readonly record struct OrientationDataPacket(
 
     public static OrientationDataPacket Deserialize(ReadOnlySpan<byte> source)
     {
-        throw new NotImplementedException();
+        const int SerializedSize = 13;
+        PacketValidation.ThrowIfInvalidLength(source, SerializedSize);
+
+        var reader = new SpanReader(source);
+        PacketValidation.ThrowIfInvalidPacketId(reader.ReadByte(), Id);
+
+        float x = reader.ReadFloat();
+        float y = reader.ReadFloat();
+        float z = reader.ReadFloat();
+
+        return new OrientationDataPacket(x, y, z);
     }
 
-    public int GetMaxSize()
-    {
-        throw new NotImplementedException();
-    }
+    /// <inheritdoc />
+    public int GetMaxSize() => 13;
 
+    /// <inheritdoc />
     public int Serialize(Span<byte> destination)
     {
-        throw new NotImplementedException();
+        var writer = new SpanWriter(destination);
+        writer.WriteByte(Id);
+        writer.WriteFloat(X);
+        writer.WriteFloat(Y);
+        writer.WriteFloat(Z);
+
+        return writer.WrittenCount;
     }
 }

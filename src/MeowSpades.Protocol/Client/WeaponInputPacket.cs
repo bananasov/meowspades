@@ -1,5 +1,6 @@
 using MeowSpades.Protocol;
 using MeowSpades.Protocol.Enums;
+using MeowSpades.Protocol.IO;
 
 namespace MeowSpades.Protocol.Client;
 
@@ -11,18 +12,32 @@ public readonly record struct WeaponInputPacket(byte PlayerId, WeaponButtonState
     /// <inheritdoc />
     public static byte Id => 4;
 
+    /// <inheritdoc />
     public static WeaponInputPacket Deserialize(ReadOnlySpan<byte> source)
     {
-        throw new NotImplementedException();
+        const int SerializedSize = 3;
+        PacketValidation.ThrowIfInvalidLength(source, SerializedSize);
+
+        var reader = new SpanReader(source);
+        PacketValidation.ThrowIfInvalidPacketId(reader.ReadByte(), Id);
+
+        byte playerId = reader.ReadByte();
+        var buttons = (WeaponButtonState)reader.ReadByte();
+
+        return new WeaponInputPacket(playerId, buttons);
     }
 
-    public int GetMaxSize()
-    {
-        throw new NotImplementedException();
-    }
+    /// <inheritdoc />
+    public int GetMaxSize() => 3;
 
+    /// <inheritdoc />
     public int Serialize(Span<byte> destination)
     {
-        throw new NotImplementedException();
+        var writer = new SpanWriter(destination);
+        writer.WriteByte(Id);
+        writer.WriteByte(PlayerId);
+        writer.WriteByte((byte)Buttons);
+
+        return writer.WrittenCount;
     }
 }

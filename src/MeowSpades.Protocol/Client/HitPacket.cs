@@ -1,4 +1,5 @@
 using MeowSpades.Protocol.Enums;
+using MeowSpades.Protocol.IO;
 
 namespace MeowSpades.Protocol.Client;
 
@@ -10,18 +11,32 @@ public readonly record struct HitPacket(byte TargetPlayerId, HitType Type) : IPa
     /// <inheritdoc />
     public static byte Id => 5;
 
+    /// <inheritdoc />
     public static HitPacket Deserialize(ReadOnlySpan<byte> source)
     {
-        throw new NotImplementedException();
+        const int SerializedSize = 3;
+        PacketValidation.ThrowIfInvalidLength(source, SerializedSize);
+
+        var reader = new SpanReader(source);
+        PacketValidation.ThrowIfInvalidPacketId(reader.ReadByte(), Id);
+
+        byte targetPlayerId = reader.ReadByte();
+        var hitType = (HitType)reader.ReadByte();
+
+        return new HitPacket(targetPlayerId, hitType);
     }
 
-    public int GetMaxSize()
-    {
-        throw new NotImplementedException();
-    }
+    /// <inheritdoc />
+    public int GetMaxSize() => 3;
 
+    /// <inheritdoc />
     public int Serialize(Span<byte> destination)
     {
-        throw new NotImplementedException();
+        var writer = new SpanWriter(destination);
+        writer.WriteByte(Id);
+        writer.WriteByte(TargetPlayerId);
+        writer.WriteByte((byte)Type);
+
+        return writer.WrittenCount;
     }
 }

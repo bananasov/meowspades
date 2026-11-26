@@ -1,3 +1,5 @@
+using MeowSpades.Protocol.IO;
+
 namespace MeowSpades.Protocol.Client;
 
 /// <summary>Sets the color of a player's held block.</summary>
@@ -15,18 +17,36 @@ public readonly record struct SetColorPacket(
     /// <inheritdoc />
     public static byte Id => 8;
 
+    /// <inheritdoc />
     public static SetColorPacket Deserialize(ReadOnlySpan<byte> source)
     {
-        throw new NotImplementedException();
+        const int SerializedSize = 5;
+        PacketValidation.ThrowIfInvalidLength(source, SerializedSize);
+
+        var reader = new SpanReader(source);
+        PacketValidation.ThrowIfInvalidPacketId(reader.ReadByte(), Id);
+
+        var playerId = reader.ReadByte();
+        var blue = reader.ReadByte();
+        var green = reader.ReadByte();
+        var red = reader.ReadByte();
+
+        return new SetColorPacket(playerId, blue, green, red);
     }
 
-    public int GetMaxSize()
-    {
-        throw new NotImplementedException();
-    }
+    /// <inheritdoc />
+    public int GetMaxSize() => 5;
 
+    /// <inheritdoc />
     public int Serialize(Span<byte> destination)
     {
-        throw new NotImplementedException();
+        var writer = new SpanWriter(destination);
+        writer.WriteByte(Id);
+        writer.WriteByte(PlayerId);
+        writer.WriteByte(Blue);
+        writer.WriteByte(Green);
+        writer.WriteByte(Red);
+
+        return writer.WrittenCount;
     }
 }

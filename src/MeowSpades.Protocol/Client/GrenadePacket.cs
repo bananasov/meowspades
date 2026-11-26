@@ -1,3 +1,5 @@
+using MeowSpades.Protocol.IO;
+
 namespace MeowSpades.Protocol.Client;
 
 /// <summary>Spawns a grenade with its fuse, position, and velocity.</summary>
@@ -23,18 +25,52 @@ public readonly record struct GrenadePacket(
     /// <inheritdoc />
     public static byte Id => 6;
 
+    /// <inheritdoc />
     public static GrenadePacket Deserialize(ReadOnlySpan<byte> source)
     {
-        throw new NotImplementedException();
+        const int SerializedSize = 30;
+        PacketValidation.ThrowIfInvalidLength(source, SerializedSize);
+
+        var reader = new SpanReader(source);
+        PacketValidation.ThrowIfInvalidPacketId(reader.ReadByte(), Id);
+
+        byte playerId = reader.ReadByte();
+        float fuseLength = reader.ReadFloat();
+        float x = reader.ReadFloat();
+        float y = reader.ReadFloat();
+        float z = reader.ReadFloat();
+        float velocityX = reader.ReadFloat();
+        float velocityY = reader.ReadFloat();
+        float velocityZ = reader.ReadFloat();
+
+        return new GrenadePacket(
+            playerId,
+            fuseLength,
+            x,
+            y,
+            z,
+            velocityX,
+            velocityY,
+            velocityZ);
     }
 
-    public int GetMaxSize()
-    {
-        throw new NotImplementedException();
-    }
+    /// <inheritdoc />
+    public int GetMaxSize() => 30;
 
+    /// <inheritdoc />
     public int Serialize(Span<byte> destination)
     {
-        throw new NotImplementedException();
+        var writer = new SpanWriter(destination);
+        writer.WriteByte(Id);
+        writer.WriteByte(PlayerId);
+        writer.WriteFloat(FuseLength);
+        writer.WriteFloat(X);
+        writer.WriteFloat(Y);
+        writer.WriteFloat(Z);
+        writer.WriteFloat(VelocityX);
+        writer.WriteFloat(VelocityY);
+        writer.WriteFloat(VelocityZ);
+
+        return writer.WrittenCount;
     }
 }

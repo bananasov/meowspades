@@ -1,3 +1,5 @@
+using MeowSpades.Protocol.IO;
+
 namespace MeowSpades.Protocol.Client;
 
 /// <summary>Requests a team change.</summary>
@@ -11,18 +13,32 @@ public readonly record struct ChangeTeamPacket(
     /// <inheritdoc />
     public static byte Id => 29;
 
+    /// <inheritdoc />
+    public int GetMaxSize() => 3;
+
+    /// <inheritdoc />
     public static ChangeTeamPacket Deserialize(ReadOnlySpan<byte> source)
     {
-        throw new NotImplementedException();
+        const int SerializedSize = 3;
+        PacketValidation.ThrowIfInvalidLength(source, SerializedSize);
+
+        var reader = new SpanReader(source);
+        PacketValidation.ThrowIfInvalidPacketId(reader.ReadByte(), Id);
+
+        var playerId = reader.ReadByte();
+        var team = reader.ReadByte();
+
+        return new ChangeTeamPacket(playerId, team);
     }
 
-    public int GetMaxSize()
-    {
-        throw new NotImplementedException();
-    }
-
+    /// <inheritdoc />
     public int Serialize(Span<byte> destination)
     {
-        throw new NotImplementedException();
+        var writer = new SpanWriter(destination);
+        writer.WriteByte(Id);
+        writer.WriteByte(PlayerId);
+        writer.WriteByte(Team);
+
+        return writer.WrittenCount;
     }
 }
