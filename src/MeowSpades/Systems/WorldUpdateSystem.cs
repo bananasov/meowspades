@@ -1,21 +1,18 @@
 using Arch.Core;
 using Arch.System;
-using Enet;
 using MeowSpades.Components;
 using MeowSpades.Models;
 using MeowSpades.Network;
-using Serilog;
 
 namespace MeowSpades.Systems;
 
 public sealed class WorldUpdateSystem(World world) : BaseSystem<World, ServerContext>(world)
 {
+    private readonly QueryDescription playerQuery = new QueryDescription().WithAll<Player>();
+
     public override void Update(in ServerContext context)
     {
-        foreach (var playerSlot in context.GetPlayers())
-        {
-            var player = World.Get<Player>(playerSlot.Entity);
-
+        world.Query(in playerQuery, (Entity entity, ref Player player) => {
             switch (player.State)
             {
                 case PlayerState.Disconnected:
@@ -45,6 +42,8 @@ public sealed class WorldUpdateSystem(World world) : BaseSystem<World, ServerCon
                     // TODO: Handle ready players.
                     break;
             }
-        }
+
+            Console.WriteLine($"Moved: {entity}");
+        });
     }
 }
