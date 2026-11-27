@@ -1,5 +1,6 @@
 using MeowSpades.Protocol;
 using MeowSpades.Protocol.Enums;
+using MeowSpades.Binary;
 using MeowSpades.Protocol.IO;
 
 namespace MeowSpades.Protocol.Client;

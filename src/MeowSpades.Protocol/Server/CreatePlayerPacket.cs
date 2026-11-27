@@ -1,5 +1,6 @@
 using System.Numerics;
 using System.Text;
+using MeowSpades.Binary;
 using MeowSpades.Protocol.IO;
 
 namespace MeowSpades.Protocol.Server;

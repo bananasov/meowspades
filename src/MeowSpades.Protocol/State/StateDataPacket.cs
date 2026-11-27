@@ -1,6 +1,7 @@
 using System.Numerics;
 using System.Text;
 using MeowSpades.Protocol.Enums;
+using MeowSpades.Binary;
 using MeowSpades.Protocol.IO;
 using MeowSpades.Protocol.Models;
 

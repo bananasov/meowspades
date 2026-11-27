@@ -1,4 +1,5 @@
 using System.Text;
+using MeowSpades.Binary;
 using MeowSpades.Protocol.IO;
 using MeowSpades.Protocol.Models;
 
