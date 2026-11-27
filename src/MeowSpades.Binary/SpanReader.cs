@@ -10,7 +10,7 @@ public ref struct SpanReader
     private int _position;
 
     /// <summary>Initializes a reader over serialized packet data.</summary>
-    /// <param name="source">The serialized data to read.</param>
+    /// <param name="source">The binary data to read.</param>
     public SpanReader(ReadOnlySpan<byte> source)
     {
         _source = source;
