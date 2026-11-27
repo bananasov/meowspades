@@ -1,13 +1,12 @@
+using System.Numerics;
 using MeowSpades.Protocol.IO;
 
 namespace MeowSpades.Protocol.Server;
 
 /// <summary>Reports that a player dropped intel.</summary>
 /// <param name="PlayerId">The player's identifier.</param>
-/// <param name="X">The drop X coordinate.</param>
-/// <param name="Y">The drop Y coordinate.</param>
-/// <param name="Z">The drop Z coordinate.</param>
-public readonly record struct IntelDropPacket(byte PlayerId, float X, float Y, float Z) : IPacket<IntelDropPacket>
+/// <param name="Position">The intel's drop position.</param>
+public readonly record struct IntelDropPacket(byte PlayerId, Vector3 Position) : IPacket<IntelDropPacket>
 {
     /// <inheritdoc />
     public static byte Id => 25;
@@ -24,7 +23,7 @@ public readonly record struct IntelDropPacket(byte PlayerId, float X, float Y, f
         var playerId = reader.ReadByte();
         var position = reader.ReadVector3();
 
-        return new IntelDropPacket(playerId, position.X, position.Y, position.Z);
+        return new IntelDropPacket(playerId, position);
     }
 
     /// <inheritdoc />
@@ -36,7 +35,7 @@ public readonly record struct IntelDropPacket(byte PlayerId, float X, float Y, f
         var writer = new SpanWriter(destination);
         writer.WriteByte(Id);
         writer.WriteByte(PlayerId);
-        writer.WriteVector3(X, Y, Z);
+        writer.WriteVector3(Position);
 
         return writer.WrittenCount;
     }

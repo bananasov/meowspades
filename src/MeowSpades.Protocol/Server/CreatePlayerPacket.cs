@@ -1,3 +1,4 @@
+using System.Numerics;
 using System.Text;
 using MeowSpades.Protocol.IO;
 
@@ -7,17 +8,13 @@ namespace MeowSpades.Protocol.Server;
 /// <param name="PlayerId">The player identifier.</param>
 /// <param name="Weapon">The weapon identifier.</param>
 /// <param name="Team">The team identifier.</param>
-/// <param name="X">The spawn X coordinate.</param>
-/// <param name="Y">The spawn Y coordinate.</param>
-/// <param name="Z">The spawn Z coordinate.</param>
+/// <param name="Position">The player's spawn position.</param>
 /// <param name="Name">The CP437-encoded player name as a .NET string.</param>
 public readonly record struct CreatePlayerPacket(
     byte PlayerId,
     byte Weapon,
     byte Team,
-    float X,
-    float Y,
-    float Z,
+    Vector3 Position,
     string Name
 ) : IPacket<CreatePlayerPacket>
 {
@@ -47,13 +44,12 @@ public readonly record struct CreatePlayerPacket(
         var name = Cp437.GetString(nameBytes);
 
         return new CreatePlayerPacket(
-                    playerId,
-                    weapon,
-                    team,
-                    position.X,
-                    position.Y,
-                    position.Z,
-                    name);
+            playerId,
+            weapon,
+            team,
+            position,
+            name
+        );
     }
 
     /// <inheritdoc />
@@ -64,7 +60,7 @@ public readonly record struct CreatePlayerPacket(
         writer.WriteByte(PlayerId);
         writer.WriteByte(Weapon);
         writer.WriteByte(Team);
-        writer.WriteVector3(X, Y, Z);
+        writer.WriteVector3(Position);
         writer.WriteBytes(Cp437.GetBytes(Name));
 
         return writer.WrittenCount;

@@ -2,15 +2,10 @@ using MeowSpades.Protocol.IO;
 
 namespace MeowSpades.Protocol.Client;
 
-// TODO: Consider using Vector3 here, its the same anyways.
 /// <summary>Sets the sender's world position.</summary>
-/// <param name="X">The X coordinate.</param>
-/// <param name="Y">The Y coordinate.</param>
-/// <param name="Z">The Z coordinate.</param>
+/// <param name="Position">The sender's world position.</param>
 public readonly record struct PositionDataPacket(
-    float X,
-    float Y,
-    float Z
+    System.Numerics.Vector3 Position
 ) : IPacket<PositionDataPacket>
 {
     /// <inheritdoc />
@@ -26,7 +21,7 @@ public readonly record struct PositionDataPacket(
         PacketValidation.ThrowIfInvalidPacketId(reader.ReadByte(), Id);
 
         var position = reader.ReadVector3();
-        return new PositionDataPacket(position.X, position.Y, position.Z);
+        return new PositionDataPacket(position);
     }
 
     /// <inheritdoc />
@@ -37,7 +32,7 @@ public readonly record struct PositionDataPacket(
     {
         var writer = new SpanWriter(destination);
         writer.WriteByte(Id);
-        writer.WriteVector3(X, Y, Z);
+        writer.WriteVector3(Position);
 
         return writer.WrittenCount;
     }

@@ -1,3 +1,4 @@
+using System.Numerics;
 using MeowSpades.Protocol.Enums;
 using MeowSpades.Protocol.IO;
 
@@ -6,15 +7,11 @@ namespace MeowSpades.Protocol.Client;
 /// <summary>Places or destroys a block at integer map coordinates.</summary>
 /// <param name="PlayerId">The player identifier.</param>
 /// <param name="Action">The block action.</param>
-/// <param name="X">The X map coordinate.</param>
-/// <param name="Y">The Y map coordinate.</param>
-/// <param name="Z">The Z map coordinate.</param>
+/// <param name="Location">The integer map coordinates of the block.</param>
 public readonly record struct BlockActionPacket(
     byte PlayerId,
     BlockActionType Action,
-    int X,
-    int Y,
-    int Z
+    Vector3 Location
 ) : IPacket<BlockActionPacket>
 {
     /// <inheritdoc />
@@ -33,12 +30,10 @@ public readonly record struct BlockActionPacket(
         PacketValidation.ThrowIfInvalidPacketId(reader.ReadByte(), Id);
 
         var playerId = reader.ReadByte();
-        var actionType = (BlockActionType)reader.ReadByte();
-        var x = reader.ReadInt32();
-        var y = reader.ReadInt32();
-        var z = reader.ReadInt32();
+        var action = (BlockActionType)reader.ReadByte();
+        var location = reader.ReadInt32Vector3();
 
-        return new BlockActionPacket(playerId, actionType, x, y, z);
+        return new BlockActionPacket(playerId, action, location);
     }
 
     /// <inheritdoc />
@@ -48,9 +43,7 @@ public readonly record struct BlockActionPacket(
         writer.WriteByte(Id);
         writer.WriteByte(PlayerId);
         writer.WriteByte((byte)Action);
-        writer.WriteInt32(X);
-        writer.WriteInt32(Y);
-        writer.WriteInt32(Z);
+        writer.WriteInt32Vector3(Location);
 
         return writer.WrittenCount;
     }

@@ -2,15 +2,10 @@ using MeowSpades.Protocol.IO;
 
 namespace MeowSpades.Protocol.Client;
 
-// TODO: Consider using Vector3 here, its the same anyways.
 /// <summary>Sets the sender's world orientation.</summary>
-/// <param name="X">The X component.</param>
-/// <param name="Y">The Y component.</param>
-/// <param name="Z">The Z component.</param>
+/// <param name="Orientation">The sender's world orientation vector.</param>
 public readonly record struct OrientationDataPacket(
-    float X,
-    float Y,
-    float Z
+    System.Numerics.Vector3 Orientation
 ) : IPacket<OrientationDataPacket>
 {
     /// <inheritdoc />
@@ -25,7 +20,7 @@ public readonly record struct OrientationDataPacket(
         PacketValidation.ThrowIfInvalidPacketId(reader.ReadByte(), Id);
 
         var orientation = reader.ReadVector3();
-        return new OrientationDataPacket(orientation.X, orientation.Y, orientation.Z);
+        return new OrientationDataPacket(orientation);
     }
 
     /// <inheritdoc />
@@ -36,7 +31,7 @@ public readonly record struct OrientationDataPacket(
     {
         var writer = new SpanWriter(destination);
         writer.WriteByte(Id);
-        writer.WriteVector3(X, Y, Z);
+        writer.WriteVector3(Orientation);
 
         return writer.WrittenCount;
     }

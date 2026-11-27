@@ -1,3 +1,4 @@
+using System.Numerics;
 using MeowSpades.Protocol.IO;
 
 namespace MeowSpades.Protocol.Server;
@@ -5,15 +6,11 @@ namespace MeowSpades.Protocol.Server;
 /// <summary>Moves a game object such as a tent, intel, or grenade.</summary>
 /// <param name="ObjectId">The object identifier.</param>
 /// <param name="Team">The object team.</param>
-/// <param name="X">The X coordinate.</param>
-/// <param name="Y">The Y coordinate.</param>
-/// <param name="Z">The Z coordinate.</param>
+/// <param name="Position">The object's world position.</param>
 public readonly record struct MoveObjectPacket(
     byte ObjectId,
     byte Team,
-    float X,
-    float Y,
-    float Z
+    Vector3 Position
 ) : IPacket<MoveObjectPacket>
 {
     /// <inheritdoc />
@@ -31,7 +28,8 @@ public readonly record struct MoveObjectPacket(
         var objectId = reader.ReadByte();
         var team = reader.ReadByte();
         var position = reader.ReadVector3();
-        return new MoveObjectPacket(objectId, team, position.X, position.Y, position.Z);
+
+        return new MoveObjectPacket(objectId, team, position);
     }
 
     /// <inheritdoc />
@@ -44,7 +42,7 @@ public readonly record struct MoveObjectPacket(
         writer.WriteByte(Id);
         writer.WriteByte(ObjectId);
         writer.WriteByte(Team);
-        writer.WriteVector3(X, Y, Z);
+        writer.WriteVector3(Position);
 
         return writer.WrittenCount;
     }

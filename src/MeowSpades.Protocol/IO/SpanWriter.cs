@@ -119,6 +119,15 @@ internal ref struct SpanWriter
         WriteFloat(z);
     }
 
+    /// <summary>Writes X, Y, and Z components as little-endian signed 32-bit integers.</summary>
+    /// <param name="value">The vector to write.</param>
+    internal void WriteInt32Vector3(Vector3 value)
+    {
+        WriteInt32((int)value.X);
+        WriteInt32((int)value.Y);
+        WriteInt32((int)value.Z);
+    }
+
     /// <summary>Copies bytes into the destination.</summary>
     /// <param name="value">The bytes to write.</param>
     internal void WriteBytes(scoped ReadOnlySpan<byte> value)

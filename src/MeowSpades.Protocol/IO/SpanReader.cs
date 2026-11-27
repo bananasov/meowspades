@@ -120,6 +120,16 @@ internal ref struct SpanReader
         return new Vector3(x, y, z);
     }
 
+    /// <summary>Reads X, Y, and Z components as little-endian signed 32-bit integers.</summary>
+    /// <returns>The vector read.</returns>
+    internal Vector3 ReadInt32Vector3()
+    {
+        int x = ReadInt32();
+        int y = ReadInt32();
+        int z = ReadInt32();
+        return new Vector3(x, y, z);
+    }
+
     /// <summary>Reads a specified number of bytes from the source.</summary>
     /// <param name="count">The number of bytes to read.</param>
     /// <returns>A slice of the source containing the bytes read.</returns>

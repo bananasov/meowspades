@@ -1,3 +1,4 @@
+using System.Numerics;
 using MeowSpades.Protocol.IO;
 
 namespace MeowSpades.Protocol.Server;
@@ -5,15 +6,11 @@ namespace MeowSpades.Protocol.Server;
 /// <summary>Sets health and identifies the source of damage.</summary>
 /// <param name="Health">The resulting health value.</param>
 /// <param name="DamageType">Zero for fall damage or one for weapon damage.</param>
-/// <param name="SourceX">The source X coordinate.</param>
-/// <param name="SourceY">The source Y coordinate.</param>
-/// <param name="SourceZ">The source Z coordinate.</param>
+/// <param name="SourcePosition">The position from which the damage originated.</param>
 public readonly record struct SetHealthPacket(
     byte Health,
     byte DamageType,
-    float SourceX,
-    float SourceY,
-    float SourceZ
+    Vector3 SourcePosition
 ) : IPacket<SetHealthPacket>
 {
     /// <inheritdoc />
@@ -31,13 +28,12 @@ public readonly record struct SetHealthPacket(
         var health = reader.ReadByte();
         var damageType = reader.ReadByte();
         var sourcePosition = reader.ReadVector3();
-    
+
         return new SetHealthPacket(
             health,
             damageType,
-            sourcePosition.X,
-            sourcePosition.Y,
-            sourcePosition.Z);
+            sourcePosition
+        );
     }
 
     /// <inheritdoc />
@@ -50,7 +46,7 @@ public readonly record struct SetHealthPacket(
         writer.WriteByte(Id);
         writer.WriteByte(Health);
         writer.WriteByte(DamageType);
-        writer.WriteVector3(SourceX, SourceY, SourceZ);
+        writer.WriteVector3(SourcePosition);
 
         return writer.WrittenCount;
     }
