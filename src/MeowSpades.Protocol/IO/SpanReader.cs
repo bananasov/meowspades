@@ -1,5 +1,6 @@
 using System.Buffers.Binary;
 using System.Numerics;
+using MeowSpades.Protocol.Models;
 
 namespace MeowSpades.Protocol.IO;
 
@@ -129,6 +130,10 @@ internal ref struct SpanReader
         int z = ReadInt32();
         return new Vector3(x, y, z);
     }
+
+    /// <summary>Reads a color encoded as blue, green, then red bytes.</summary>
+    /// <returns>The color read.</returns>
+    internal Color ReadColor() => new(ReadByte(), ReadByte(), ReadByte());
 
     /// <summary>Reads a specified number of bytes from the source.</summary>
     /// <param name="count">The number of bytes to read.</param>

@@ -1,5 +1,6 @@
 using System.Text;
 using MeowSpades.Protocol.IO;
+using MeowSpades.Protocol.Models;
 
 namespace MeowSpades.Protocol.Client;
 
@@ -9,9 +10,7 @@ namespace MeowSpades.Protocol.Client;
 /// <param name="Weapon">The weapon identifier.</param>
 /// <param name="HeldItem">The held item identifier.</param>
 /// <param name="Kills">The kill count.</param>
-/// <param name="Blue">The blue component.</param>
-/// <param name="Green">The green component.</param>
-/// <param name="Red">The red component.</param>
+/// <param name="BlockColor">The color of the player's block.</param>
 /// <param name="Name">The CP437-encoded name as a .NET string.</param>
 public readonly record struct ExistingPlayerPacket(
     byte PlayerId,
@@ -19,9 +18,7 @@ public readonly record struct ExistingPlayerPacket(
     byte Weapon,
     byte HeldItem,
     uint Kills,
-    byte Blue,
-    byte Green,
-    byte Red,
+    Color BlockColor,
     string Name
 ) : IPacket<ExistingPlayerPacket>
 {
@@ -47,9 +44,7 @@ public readonly record struct ExistingPlayerPacket(
         var weapon = reader.ReadByte();
         var heldItem = reader.ReadByte();
         var kills = reader.ReadUInt32();
-        var blue = reader.ReadByte();
-        var green = reader.ReadByte();
-        var red = reader.ReadByte();
+        var blockColor = reader.ReadColor();
 
         var nameBytes = reader.ReadBytes(reader.Remaining);
         var name = Cp437.GetString(nameBytes);
@@ -60,9 +55,7 @@ public readonly record struct ExistingPlayerPacket(
             weapon,
             heldItem,
             kills,
-            blue,
-            green,
-            red,
+            blockColor,
             name
         );
     }
@@ -77,9 +70,7 @@ public readonly record struct ExistingPlayerPacket(
         writer.WriteByte(Weapon);
         writer.WriteByte(HeldItem);
         writer.WriteUInt32(Kills);
-        writer.WriteByte(Blue);
-        writer.WriteByte(Green);
-        writer.WriteByte(Red);
+        writer.WriteColor(BlockColor);
         writer.WriteBytes(Cp437.GetBytes(Name));
 
         return writer.WrittenCount;

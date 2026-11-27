@@ -1,13 +1,12 @@
 using MeowSpades.Protocol.IO;
+using MeowSpades.Protocol.Models;
 
 namespace MeowSpades.Protocol.Server;
 
 /// <summary>Sets the client's fog color.</summary>
 /// <param name="Alpha">The unused alpha component.</param>
-/// <param name="Blue">The blue component.</param>
-/// <param name="Green">The green component.</param>
-/// <param name="Red">The red component.</param>
-public readonly record struct FogColorPacket(byte Alpha, byte Blue, byte Green, byte Red) : IPacket<FogColorPacket>
+/// <param name="Color">The fog color</param>
+public readonly record struct FogColorPacket(byte Alpha, Color Color) : IPacket<FogColorPacket>
 {
     /// <inheritdoc />
     public static byte Id => 27;
@@ -25,11 +24,9 @@ public readonly record struct FogColorPacket(byte Alpha, byte Blue, byte Green, 
         PacketValidation.ThrowIfInvalidPacketId(reader.ReadByte(), Id);
 
         var alpha = reader.ReadByte();
-        var blue = reader.ReadByte();
-        var green = reader.ReadByte();
-        var red = reader.ReadByte();
+        var color = reader.ReadColor();
 
-        return new FogColorPacket(alpha, blue, green, red);
+        return new FogColorPacket(alpha, color);
     }
 
     /// <inheritdoc />
@@ -38,9 +35,7 @@ public readonly record struct FogColorPacket(byte Alpha, byte Blue, byte Green, 
         var writer = new SpanWriter(destination);
         writer.WriteByte(Id);
         writer.WriteByte(Alpha);
-        writer.WriteByte(Blue);
-        writer.WriteByte(Green);
-        writer.WriteByte(Red);
+        writer.WriteColor(Color);
 
         return writer.WrittenCount;
     }

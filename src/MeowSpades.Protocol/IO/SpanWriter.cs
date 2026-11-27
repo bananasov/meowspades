@@ -1,5 +1,6 @@
 using System.Buffers.Binary;
 using System.Numerics;
+using MeowSpades.Protocol.Models;
 
 namespace MeowSpades.Protocol.IO;
 
@@ -126,6 +127,15 @@ internal ref struct SpanWriter
         WriteInt32((int)value.X);
         WriteInt32((int)value.Y);
         WriteInt32((int)value.Z);
+    }
+
+    /// <summary>Writes a color as blue, green, then red bytes.</summary>
+    /// <param name="value">The color to write.</param>
+    internal void WriteColor(Color value)
+    {
+        WriteByte(value.Blue);
+        WriteByte(value.Green);
+        WriteByte(value.Red);
     }
 
     /// <summary>Copies bytes into the destination.</summary>

@@ -1,17 +1,14 @@
 using MeowSpades.Protocol.IO;
+using MeowSpades.Protocol.Models;
 
 namespace MeowSpades.Protocol.Client;
 
 /// <summary>Sets the color of a player's held block.</summary>
 /// <param name="PlayerId">The player identifier.</param>
-/// <param name="Blue">The blue color component.</param>
-/// <param name="Green">The green color component.</param>
-/// <param name="Red">The red color component.</param>
+/// <param name="Color">The held block color.</param>
 public readonly record struct SetColorPacket(
     byte PlayerId,
-    byte Blue,
-    byte Green,
-    byte Red
+    Color Color
 ) : IPacket<SetColorPacket>
 {
     /// <inheritdoc />
@@ -27,11 +24,9 @@ public readonly record struct SetColorPacket(
         PacketValidation.ThrowIfInvalidPacketId(reader.ReadByte(), Id);
 
         var playerId = reader.ReadByte();
-        var blue = reader.ReadByte();
-        var green = reader.ReadByte();
-        var red = reader.ReadByte();
+        var color = reader.ReadColor();
 
-        return new SetColorPacket(playerId, blue, green, red);
+        return new SetColorPacket(playerId, color);
     }
 
     /// <inheritdoc />
@@ -43,9 +38,7 @@ public readonly record struct SetColorPacket(
         var writer = new SpanWriter(destination);
         writer.WriteByte(Id);
         writer.WriteByte(PlayerId);
-        writer.WriteByte(Blue);
-        writer.WriteByte(Green);
-        writer.WriteByte(Red);
+        writer.WriteColor(Color);
 
         return writer.WrittenCount;
     }

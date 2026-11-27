@@ -2,20 +2,15 @@ using System.Numerics;
 using System.Text;
 using MeowSpades.Protocol.Enums;
 using MeowSpades.Protocol.IO;
+using MeowSpades.Protocol.Models;
 
 namespace MeowSpades.Protocol.State;
 
 /// <summary>Contains game parameters and the mode-specific state sent after map transfer.</summary>
 /// <param name="PlayerId">The local player's identifier.</param>
-/// <param name="FogBlue">The fog blue component.</param>
-/// <param name="FogGreen">The fog green component.</param>
-/// <param name="FogRed">The fog red component.</param>
-/// <param name="Team1Blue">The first team's blue component.</param>
-/// <param name="Team1Green">The first team's green component.</param>
-/// <param name="Team1Red">The first team's red component.</param>
-/// <param name="Team2Blue">The second team's blue component.</param>
-/// <param name="Team2Green">The second team's green component.</param>
-/// <param name="Team2Red">The second team's red component.</param>
+/// <param name="FogColor">The fog color.</param>
+/// <param name="Team1Color">The first team's color.</param>
+/// <param name="Team2Color">The second team's color.</param>
 /// <param name="Team1Name">The first team's fixed-width CP437 name.</param>
 /// <param name="Team2Name">The second team's fixed-width CP437 name.</param>
 /// <param name="Mode">The game mode.</param>
@@ -23,15 +18,9 @@ namespace MeowSpades.Protocol.State;
 /// <param name="Territories">The TC territories when appropriate.</param>
 public readonly record struct StateDataPacket(
     byte PlayerId,
-    byte FogBlue,
-    byte FogGreen,
-    byte FogRed,
-    byte Team1Blue,
-    byte Team1Green,
-    byte Team1Red,
-    byte Team2Blue,
-    byte Team2Green,
-    byte Team2Red,
+    Color FogColor,
+    Color Team1Color,
+    Color Team2Color,
     string Team1Name,
     string Team2Name,
     GameMode Mode,
@@ -72,15 +61,9 @@ public readonly record struct StateDataPacket(
         var writer = new SpanWriter(destination);
         writer.WriteByte(Id);
         writer.WriteByte(PlayerId);
-        writer.WriteByte(FogBlue);
-        writer.WriteByte(FogGreen);
-        writer.WriteByte(FogRed);
-        writer.WriteByte(Team1Blue);
-        writer.WriteByte(Team1Green);
-        writer.WriteByte(Team1Red);
-        writer.WriteByte(Team2Blue);
-        writer.WriteByte(Team2Green);
-        writer.WriteByte(Team2Red);
+        writer.WriteColor(FogColor);
+        writer.WriteColor(Team1Color);
+        writer.WriteColor(Team2Color);
         WriteFixedTeamName(ref writer, Team1Name);
         WriteFixedTeamName(ref writer, Team2Name);
         writer.WriteByte((byte)Mode);
@@ -116,15 +99,9 @@ public readonly record struct StateDataPacket(
         PacketValidation.ThrowIfInvalidPacketId(reader.ReadByte(), Id);
 
         var playerId = reader.ReadByte();
-        var fogBlue = reader.ReadByte();
-        var fogGreen = reader.ReadByte();
-        var fogRed = reader.ReadByte();
-        var team1Blue = reader.ReadByte();
-        var team1Green = reader.ReadByte();
-        var team1Red = reader.ReadByte();
-        var team2Blue = reader.ReadByte();
-        var team2Green = reader.ReadByte();
-        var team2Red = reader.ReadByte();
+        var fogColor = reader.ReadColor();
+        var team1Color = reader.ReadColor();
+        var team2Color = reader.ReadColor();
         var team1Name = ReadFixedTeamName(ref reader);
         var team2Name = ReadFixedTeamName(ref reader);
         var modeId = reader.ReadByte();
@@ -149,15 +126,9 @@ public readonly record struct StateDataPacket(
 
         return new StateDataPacket(
             playerId,
-            fogBlue,
-            fogGreen,
-            fogRed,
-            team1Blue,
-            team1Green,
-            team1Red,
-            team2Blue,
-            team2Green,
-            team2Red,
+            fogColor,
+            team1Color,
+            team2Color,
             team1Name,
             team2Name,
             mode,
